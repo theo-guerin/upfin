@@ -150,7 +150,7 @@ function reset() {
       @submit="onSubmit"
     />
 
-    <template v-else>
+    <div v-else class="space-y-4 text-center">
       <p class="text-lg font-semibold text-green-600 dark:text-green-400">
         Done!
       </p>
@@ -158,6 +158,6 @@ function reset() {
         {{ selected?.name }} ({{ selected?.year }}) has been added.
       </p>
       <Button @click="reset">Upload another</Button>
-    </template>
+    </div>
   </main>
 </template>
