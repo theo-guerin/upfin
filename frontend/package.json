@@ -12,7 +12,8 @@
     "lint": "run-s \"lint:*\"",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "generate-api": "openapi-typescript http://127.0.0.1:8080/openapi.json -o ./src/gen/types.ts"
   },
   "dependencies": {
     "@lucide/vue": "^1.24.0",
@@ -20,6 +21,7 @@
     "@vueuse/core": "^14.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "openapi-fetch": "^0.17.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.2",
     "vue": "^3.5.38"
@@ -37,6 +39,7 @@
     "eslint-plugin-vue": "~10.9.2",
     "jiti": "^2.7.0",
     "npm-run-all2": "^9.0.2",
+    "openapi-typescript": "^7.13.0",
     "oxlint": "~1.69.0",
     "prettier": "3.8.4",
     "prettier-plugin-tailwindcss": "^0.8.0",
