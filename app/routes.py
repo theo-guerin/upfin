@@ -1,56 +1,87 @@
-import jinja2
-from fastapi import APIRouter, UploadFile
-from fastapi.responses import HTMLResponse
+from http import HTTPStatus
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from fastapi import APIRouter, HTTPException, UploadFile
+from guessit import guessit
+from pydantic import BaseModel
 
 from app import config
-from app.config import ROOT_DIRECTORY
-from app.jellyfin import Jellyfin
-
-TEMPLATE_DIRECTORY = ROOT_DIRECTORY / "app" / "templates"
-UPLOAD_DIRECTORY = ROOT_DIRECTORY / "uploads"
+from app.jellyfin import Jellyfin, MovieSearchResult
 
 UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
-UPLOAD_DIRECTORY.mkdir(parents=True, exist_ok=True)
-
-jinja_environment = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(TEMPLATE_DIRECTORY),
-)
 jellyfin = Jellyfin(config.jellyfin_api_base_url, config.jellyfin_api_key)
 
 router = APIRouter()
 
 
-@router.get("/", response_class=HTMLResponse)
-async def root():
-    return jinja_environment.get_template("index.j2").render()
+class UploadRequest(BaseModel):
+    name: str
+    year: int
 
 
-@router.post("/", response_class=HTMLResponse)
-async def upload(file: UploadFile):
-    template = jinja_environment.get_template("index.j2")
-
-    if not file.filename:
-        return template.render(
-            error="No file selected.",
+@router.post(
+    "/submit",
+    responses={
+        HTTPStatus.BAD_REQUEST: {
+            "content": {
+                "application/json": {
+                    "example": {"detail": "No file attached to the upload."},
+                },
+            },
+        },
+    },
+)
+async def post_submit(movie: UploadFile, name: str, year: int):
+    if not movie.filename:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, detail="No file attached to the upload."
         )
 
-    search_results = await jellyfin.search_movie(file.filename)
-    if not search_results:
-        return template.render(
-            error=f"No movie found for {file.filename}.",
+    with TemporaryDirectory() as temporary_directory:
+        temporary_directory = Path(temporary_directory)
+
+        movie_directory = temporary_directory / name
+        movie_directory.mkdir(parents=True, exist_ok=True)
+
+        suffix = Path(movie.filename).suffix
+        movie_filename = f"{name} ({year}){suffix}"
+        movie_file = movie_directory / movie_filename
+
+        with open(movie_file, "wb") as file:
+            while chunk := await movie.read(UPLOAD_CHUNK_SIZE):
+                file.write(chunk)
+
+
+@router.get(
+    "/search_movie",
+    responses={
+        HTTPStatus.BAD_REQUEST: {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "NO_TITLE": {
+                            "summary": "No title found in filename.",
+                            "value": {
+                                "detail": "Could not detect a movie title in the filename"
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    response_model=list[MovieSearchResult],
+)
+async def get_search_movie(filename: str):
+    guess = guessit(filename, {"type": "movie"})
+
+    name = guess.get("title")
+    if not name:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="Could not detect a movie title in the filename",
         )
-    print(f"Found {len(search_results)} search results for {file.filename}.")
 
-    file_path = UPLOAD_DIRECTORY / file.filename
-
-    try:
-        with open(file_path, "wb") as buffer:
-            while chunk := await file.read(UPLOAD_CHUNK_SIZE):
-                buffer.write(chunk)
-    except Exception:
-        file_path.unlink(missing_ok=True)
-
-        return template.render(
-            error="Upload failed. Please try again.",
-        )
+    return await jellyfin.search_movie(name, guess.get("year"))

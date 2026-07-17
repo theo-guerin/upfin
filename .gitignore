@@ -1,5 +1,10 @@
 /.venv/
 __pycache__/
-/uploads/
+
 /.ruff_cache/
+
 .env
+
+/.vscode/
+/.idea/
+/.zed/
