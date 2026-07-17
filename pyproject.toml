@@ -2,4 +2,14 @@
 name = "jellyfin-uploader"
 version = "0.1.0"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "envkit>=0.7.0.post1",
+    "fastapi>=0.139.0",
+    "uvicorn[standart]>=0.51.0",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.15.21", "ty>=0.0.58"]
+
+[tool.ruff.lint]
+select = ["I", "F"]

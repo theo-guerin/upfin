@@ -1,0 +1,11 @@
+services:
+  jellyfin-uploader:
+    image: jellyfin-uploader:latest
+    build: .
+    container_name: jellyfin-uploader
+    ports:
+      - "8080:8080"
+    logging:
+      options:
+        max-size: 10m
+    restart: unless-stopped
