@@ -42,16 +42,19 @@ async def post_submit(movie: UploadFile, name: str, year: int):
     with TemporaryDirectory() as temporary_directory:
         temporary_directory = Path(temporary_directory)
 
-        movie_directory = temporary_directory / name
-        movie_directory.mkdir(parents=True, exist_ok=True)
+        movie_label = f"{name} ({year})"
+
+        destination_directory = temporary_directory / movie_label
+        destination_directory.mkdir(parents=True, exist_ok=True)
 
         suffix = Path(movie.filename).suffix
-        movie_filename = f"{name} ({year}){suffix}"
-        movie_file = movie_directory / movie_filename
+        destination_path = destination_directory / f"{movie_label}{suffix}"
 
-        with open(movie_file, "wb") as file:
+        with open(destination_path, "wb") as file:
             while chunk := await movie.read(UPLOAD_CHUNK_SIZE):
                 file.write(chunk)
+
+        destination_directory.move_into(config.jellyfin_movie_library_path)
 
 
 @router.get(
