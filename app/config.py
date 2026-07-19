@@ -5,6 +5,34 @@ from envkit import Env
 
 ROOT_DIRECTORY = Path(__file__).parent.parent
 
+LOGGING_CONFIG = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "correlation_id": {
+            "()": "asgi_correlation_id.CorrelationIdFilter",
+            "uuid_length": 32,
+            "default_value": "-",
+        },
+    },
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(correlation_id)s] %(levelname)s: %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "filters": ["correlation_id"],
+            "formatter": "standard",
+        },
+    },
+    "root": {
+        "level": "INFO",
+        "handlers": ["console"],
+    },
+}
+
 
 class Environment(Enum):
     DEVELOPMENT = auto()

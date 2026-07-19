@@ -1,10 +1,12 @@
 import uvicorn
 
-from app import config
+from app import app, config
 
 if config.environment.is_production():
-    from app import app
-
-    uvicorn.run(app, host="0.0.0.0", port=config.port)
+    uvicorn.run(
+        app, host="0.0.0.0", port=config.port, log_config=None, access_log=False
+    )
 else:
-    uvicorn.run("app:app", port=config.port, reload=True)
+    uvicorn.run(
+        "app:app", port=config.port, reload=True, log_config=None, access_log=False
+    )
