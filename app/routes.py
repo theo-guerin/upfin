@@ -35,6 +35,15 @@ class UploadRequest(BaseModel):
                 },
             },
         },
+        HTTPStatus.CONFLICT: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Inception (2010) already exists.",
+                    },
+                },
+            },
+        },
     },
 )
 async def post_submit(movie: UploadFile, name: str, year: int):
@@ -43,12 +52,19 @@ async def post_submit(movie: UploadFile, name: str, year: int):
             status_code=HTTPStatus.BAD_REQUEST, detail="No file attached to the upload."
         )
 
+    movie_label = f"{name} ({year})"
+    destination = config.jellyfin_movie_library_path / movie_label
+    if destination.exists():
+        raise HTTPException(
+            status_code=HTTPStatus.CONFLICT,
+            detail=f"{movie_label} already exists.",
+        )
+
     logger.info("receiving upload: %s (%s)", name, year)
 
     with TemporaryDirectory() as temporary_directory:
         temporary_directory = Path(temporary_directory)
 
-        movie_label = f"{name} ({year})"
         suffix = Path(movie.filename).suffix
         filename = f"{movie_label}{suffix}"
 
@@ -65,18 +81,24 @@ async def post_submit(movie: UploadFile, name: str, year: int):
         file_size = destination_path.stat().st_size
         logger.info("wrote %.1f MB to temp", file_size / (1024 * 1024))
 
-        logger.info(
-            "moving to library: %s -> %s",
-            destination_directory,
-            config.jellyfin_movie_library_path,
-        )
-        shutil.move(
-            destination_directory,
-            config.jellyfin_movie_library_path / destination_directory.name,
-        )
+        target = config.jellyfin_movie_library_path / movie_label
 
-        library_path = Path(config.jellyfin_movie_library_path) / movie_label
-        logger.info("upload complete: %s -> %s", filename, library_path)
+        logger.info("moving to library: %s -> %s", destination_directory, target)
+        try:
+            shutil.move(destination_directory, target)
+        except FileExistsError:
+            raise HTTPException(
+                status_code=HTTPStatus.CONFLICT,
+                detail=f"{movie_label} already exists.",
+            ) from None
+        except shutil.Error as exception:
+            logger.exception("shutil.move failed")
+            raise HTTPException(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
+                detail=str(exception),
+            ) from None
+
+        logger.info("upload complete: %s -> %s", filename, target)
 
 
 @router.get(

@@ -81,7 +81,7 @@ async function onSubmit() {
   submitAbort = new AbortController();
 
   try {
-    const { error: err } = await submitMovie(
+    const { error: err, response } = await submitMovie(
       file.value,
       selected.value.name,
       selected.value.year,
@@ -89,7 +89,11 @@ async function onSubmit() {
     );
 
     if (err) {
-      error.value = "Upload failed. Please try again.";
+      if (response.status === 409) {
+        error.value = `${selected.value.name} (${selected.value.year}) already exists in the library.`;
+      } else {
+        error.value = "Upload failed. Please try again.";
+      }
       return;
     }
 
