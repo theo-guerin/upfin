@@ -1,3 +1,4 @@
+import logging
 from http import HTTPStatus
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -8,6 +9,8 @@ from pydantic import BaseModel
 
 from app import config
 from app.jellyfin import Jellyfin, MovieSearchResult
+
+logger = logging.getLogger(__name__)
 
 UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 
@@ -39,6 +42,8 @@ async def post_submit(movie: UploadFile, name: str, year: int):
             status_code=HTTPStatus.BAD_REQUEST, detail="No file attached to the upload."
         )
 
+    logger.info("receiving upload: %s (%s)", name, year)
+
     with TemporaryDirectory() as temporary_directory:
         temporary_directory = Path(temporary_directory)
 
@@ -55,6 +60,8 @@ async def post_submit(movie: UploadFile, name: str, year: int):
                 file.write(chunk)
 
         destination_directory.move_into(config.jellyfin_movie_library_path)
+
+    logger.info("upload complete: %s", movie_label)
 
 
 @router.get(
@@ -82,9 +89,16 @@ async def get_search_movie(filename: str):
 
     name = guess.get("title")
     if not name:
+        logger.info("could not detect title in filename: %s", filename)
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="Could not detect a movie title in the filename",
         )
 
-    return await jellyfin.search_movie(name, guess.get("year"))
+    year = guess.get("year")
+    logger.info("searching movie: %s (%s)", name, year)
+
+    results = await jellyfin.search_movie(name, year)
+
+    logger.info("search results for %s: %d found", name, len(results))
+    return results

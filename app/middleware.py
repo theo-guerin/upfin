@@ -32,6 +32,8 @@ class ExceptionLogMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         except Exception:
             logger.exception(
-                "Unhandled exception for %s %s", request.method, request.url.path
+                "Unhandled exception for %s %s",
+                request.method,
+                request.url.path,
             )
             raise

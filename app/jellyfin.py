@@ -1,5 +1,9 @@
+import logging
+
 import httpx
 from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
 
 
 class MovieSearchResult(BaseModel):
@@ -41,6 +45,7 @@ class Jellyfin:
 
         raw_response = await request(name, year)
         if not raw_response and year is not None:
+            logger.info("no results for %s (%s), retrying without year", name, year)
             raw_response = await request(name, None)
 
         results = []
@@ -48,7 +53,9 @@ class Jellyfin:
             try:
                 result = MovieSearchResult.model_validate(raw_result)
             except Exception:
+                logger.debug("skipping invalid search result: %s", raw_result)
                 continue
             results.append(result)
 
+        logger.info("jellyfin search %s: %d results", name, len(results))
         return results
