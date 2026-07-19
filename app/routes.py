@@ -1,4 +1,5 @@
 import logging
+import shutil
 from http import HTTPStatus
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -69,7 +70,10 @@ async def post_submit(movie: UploadFile, name: str, year: int):
             destination_directory,
             config.jellyfin_movie_library_path,
         )
-        destination_directory.move_into(config.jellyfin_movie_library_path)
+        shutil.move(
+            destination_directory,
+            config.jellyfin_movie_library_path / destination_directory.name,
+        )
 
         library_path = Path(config.jellyfin_movie_library_path) / movie_label
         logger.info("upload complete: %s -> %s", filename, library_path)
