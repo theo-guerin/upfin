@@ -4,6 +4,7 @@ from http import HTTPStatus
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import pathvalidate
 from fastapi import APIRouter, HTTPException, UploadFile
 from guessit import guessit
 from pydantic import BaseModel
@@ -53,6 +54,8 @@ async def post_submit(movie: UploadFile, name: str, year: int):
         )
 
     movie_label = f"{name} ({year})"
+    movie_label = pathvalidate.sanitize_filename(movie_label)
+
     destination = config.jellyfin_movie_library_path / movie_label
     if destination.exists():
         raise HTTPException(
