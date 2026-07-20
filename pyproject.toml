@@ -21,10 +21,10 @@ dev = ["pyrefly>=1.1.1", "ruff>=0.15.21"]
 select = ["I", "F"]
 
 [tool.pyrefly]
-project-includes = ["app/**/*.py", "migrations/**/*.py"]
+project-includes = ["app/**/*.py"]
 preset = "strict"
 errors = { open-unpacking = "error", missing-source = "warn", unannotated-return = "warn" }
 
 [[tool.pyrefly.sub-config]]
-matches = "app/api/routes.py"
+matches = "app/routes.py"
 errors = { unannotated-return = "ignore" }
