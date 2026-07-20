@@ -7,7 +7,6 @@ from tempfile import TemporaryDirectory
 import pathvalidate
 from fastapi import APIRouter, HTTPException, UploadFile
 from guessit import guessit
-from pydantic import BaseModel
 
 from app import config
 from app.jellyfin import Jellyfin, MovieSearchResult
@@ -19,11 +18,6 @@ UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
 jellyfin = Jellyfin(config.jellyfin_api_base_url, config.jellyfin_api_key)
 
 router = APIRouter()
-
-
-class UploadRequest(BaseModel):
-    name: str
-    year: int
 
 
 @router.post(
