@@ -21,6 +21,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
         --link-mode=copy \
         --exclude-newer="${UV_EXCLUDE_NEWER}" \
         --locked \
+        --no-compile \
         --no-dev
 
 FROM dhi.io/python:3.14-debian13 AS runtime
