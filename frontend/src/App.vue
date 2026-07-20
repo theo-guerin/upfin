@@ -85,7 +85,7 @@ async function onSubmit() {
       file.value,
       selected.value.name,
       selected.value.year,
-      AbortSignal.any([submitAbort.signal, AbortSignal.timeout(120_000)]),
+      submitAbort.signal,
     );
 
     if (err) {
