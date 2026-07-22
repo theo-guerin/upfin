@@ -1,3 +1,4 @@
+import errno
 import logging
 import shutil
 from http import HTTPStatus
@@ -35,6 +36,15 @@ router = APIRouter()
                 "application/json": {
                     "example": {
                         "detail": "Inception (2010) already exists.",
+                    },
+                },
+            },
+        },
+        HTTPStatus.INSUFFICIENT_STORAGE: {
+            "content": {
+                "application/json": {
+                    "example": {
+                        "detail": "Disk full while moving upload to library",
                     },
                 },
             },
@@ -94,6 +104,14 @@ async def post_submit(movie: UploadFile, name: str, year: int):
                 status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
                 detail=str(exception),
             ) from None
+        except OSError as exception:
+            if exception.errno == errno.ENOSPC:
+                logger.error("disk full while moving upload to library")
+                raise HTTPException(
+                    status_code=HTTPStatus.INSUFFICIENT_STORAGE,
+                    detail="Disk full while moving upload to library",
+                ) from None
+            raise
 
         logger.info("upload complete: %s -> %s", filename, target)
 

@@ -91,6 +91,8 @@ async function onSubmit() {
     if (err) {
       if (response.status === 409) {
         error.value = `${selected.value.name} (${selected.value.year}) already exists in the library.`;
+      } else if (response.status === 507) {
+        error.value = "The server ran out of disk space while uploading. Please contact an administrator.";
       } else {
         error.value = "Upload failed. Please try again.";
       }
