@@ -2,25 +2,25 @@
 
 A small service that lets you upload movie files directly into a
 [Jellyfin](https://jellyfin.org) library directory and match them against
-existing Jellyfin entries via the API.
+existing Jellyfin entries via the Jellyfin API.
 
 ## Quick start
 
-1. Setup the service into your Jellyfin Server:
+1. Set up the service on your Jellyfin server:
 
-```yaml
-services:
-  jellyfin-uploader:
-    image: jellyfin-uploader:latest
-    container_name: jellyfin-uploader
-    ports:
-      - "5080:8080" # left is the host port — change it if 5080 is taken
-    logging:
-      options:
-        max-size: 10m
-    env_file: .env
-    restart: unless-stopped
-```
+   ```yaml
+   services:
+     jellyfin-uploader:
+       image: jellyfin-uploader:latest
+       container_name: jellyfin-uploader
+       ports:
+         - "5080:8080" # left is the host port — change it if needed
+       logging:
+         options:
+           max-size: 10m
+       env_file: .env
+       restart: unless-stopped
+   ```
 
 2. Create a `.env` file with your settings (see [Configuration](#configuration)).
 
@@ -41,7 +41,6 @@ Configuration is provided through environment variables in a `.env` file
 | `JELLYFIN_API_KEY`            | yes      |                | Jellyfin API key                               |
 | `JELLYFIN_MOVIE_LIBRARY_PATH` | yes      |                | Filesystem path to the Jellyfin movie library |
 | `ENVIRONMENT`                 | no       | `DEVELOPMENT`  | `DEVELOPMENT` or `PRODUCTION`                  |
-| `PORT`                        | no       | `8080`         | Host port to expose the server on              |
 
 ## Local development
 
