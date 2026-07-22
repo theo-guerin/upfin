@@ -43,8 +43,19 @@ router = APIRouter()
         HTTPStatus.INSUFFICIENT_STORAGE: {
             "content": {
                 "application/json": {
-                    "example": {
-                        "detail": "Disk full while moving upload to library",
+                    "examples": {
+                        "DISK_FULL_TEMP": {
+                            "summary": "Disk full while writing upload to temp.",
+                            "value": {
+                                "detail": "Disk full while writing upload to temp"
+                            },
+                        },
+                        "DISK_FULL_LIBRARY": {
+                            "summary": "Disk full while moving upload to library.",
+                            "value": {
+                                "detail": "Disk full while moving upload to library"
+                            },
+                        },
                     },
                 },
             },
@@ -81,9 +92,18 @@ async def post_submit(movie: UploadFile, name: str, year: int):
 
         logger.info("writing to temp file: %s", destination_path)
 
-        with open(destination_path, "wb") as file:
-            while chunk := await movie.read(UPLOAD_CHUNK_SIZE):
-                file.write(chunk)
+        try:
+            with open(destination_path, "wb") as file:
+                while chunk := await movie.read(UPLOAD_CHUNK_SIZE):
+                    file.write(chunk)
+        except OSError as exception:
+            if exception.errno == errno.ENOSPC:
+                logger.error("disk full while writing upload to temp")
+                raise HTTPException(
+                    status_code=HTTPStatus.INSUFFICIENT_STORAGE,
+                    detail="Disk full while writing upload to temp",
+                ) from None
+            raise
 
         file_size = destination_path.stat().st_size
         logger.info("wrote %.1f MB to temp", file_size / (1024 * 1024))
