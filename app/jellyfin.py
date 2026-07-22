@@ -1,7 +1,7 @@
 import logging
 
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +45,7 @@ class Jellyfin:
         for raw_result in response.json():
             try:
                 result = MovieSearchResult.model_validate(raw_result)
-            except Exception:
+            except ValidationError:
                 logger.debug("skipping invalid search result: %s", raw_result)
                 continue
             results.append(result)
