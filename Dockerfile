@@ -11,7 +11,8 @@ RUN bun run build-only
 FROM dhi.io/python:3.14-debian13-sfw-dev AS backend-builder
 WORKDIR /app
 ARG UV_EXCLUDE_NEWER="7 days"
-COPY --from=dhi.io/uv:0 /uv /bin/
+COPY --from=dhi.io/uv:0-debian13 /usr/local/bin/uv \
+    /usr/local/bin/uvx /usr/local/bin/
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
