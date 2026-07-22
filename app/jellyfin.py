@@ -29,27 +29,20 @@ class Jellyfin:
         httpx.HTTPStatusError: If the request to the Jellyfin API fails.
         """
 
-        async def request(name: str, year: int | None) -> httpx.Response:
-            response = await self._client.post(
-                "/Items/RemoteSearch/Movie",
-                json={
-                    "SearchInfo": {
-                        "Name": name,
-                        "Year": year,
-                    },
-                    "SearchProviderName": "TheMovieDb",
+        response = await self._client.post(
+            "/Items/RemoteSearch/Movie",
+            json={
+                "SearchInfo": {
+                    "Name": name,
+                    "Year": year,
                 },
-            )
-            response.raise_for_status()
-            return response
-
-        raw_response = await request(name, year)
-        if not raw_response and year is not None:
-            logger.info("no results for %s (%s), retrying without year", name, year)
-            raw_response = await request(name, None)
+                "SearchProviderName": "TheMovieDb",
+            },
+        )
+        response.raise_for_status()
 
         results = []
-        for raw_result in raw_response.json():
+        for raw_result in response.json():
             try:
                 result = MovieSearchResult.model_validate(raw_result)
             except Exception:
