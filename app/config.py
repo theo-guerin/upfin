@@ -48,7 +48,6 @@ class Environment(Enum):
 environment = Env.enum(
     "ENVIRONMENT", Environment, required=False, default=Environment.DEVELOPMENT
 )
-port = Env.int("PORT", required=False, default=8080)
 
 jellyfin_api_base_url = Env.str("JELLYFIN_API_BASE_URL")
 jellyfin_api_key = Env.str("JELLYFIN_API_KEY")
