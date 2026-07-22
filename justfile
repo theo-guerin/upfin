@@ -1,20 +1,29 @@
-dev:
-    concurrently "bun run --cwd ./frontend build --watch" "uv run -m app"
+dev: _load-dotenv
+    concurrently "just frontend-watch" "just run"
 
-build-frontend:
+_load-dotenv:
+    export $(grep -v '^#' .env | xargs)
+
+run:
+    uv run -m app
+
+frontend-build:
     bun run --cwd ./frontend build
 
-build-docker:
+frontend-watch:
+    bun run --cwd ./frontend build --watch
+
+docker-build:
     docker build -t jellyfin-uploader:latest .
 
-setup-arm64-builder:
+docker-setup-arm64:
     docker run --privileged --rm tonistiigi/binfmt --install arm64
     docker buildx create --name arm64builder --use 2>/dev/null || \
         docker buildx use arm64builder
     docker buildx inspect --bootstrap
 
-build-docker-arm64: setup-arm64-builder
+docker-build-arm64: docker-setup-arm64
     docker buildx build --platform linux/arm64 -t jellyfin-uploader:latest .
 
-export-docker-arm64: build-docker-arm64
+docker-save-arm64: docker-build-arm64
     docker save jellyfin-uploader:latest | gzip > jellyfin-uploader-arm64.tar.gz
