@@ -1,8 +1,6 @@
 # jellyfin-uploader
 
-A small service that lets you upload movie files directly into a
-[Jellyfin](https://jellyfin.org) library directory and match them against
-existing Jellyfin entries via the Jellyfin API.
+A web UI that uploads movies to your [Jellyfin](https://jellyfin.org) library, auto-detects movie names from filenames, and matches them against your Jellyfin catalog.
 
 ## Quick start
 
