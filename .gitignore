@@ -8,3 +8,5 @@ __pycache__/
 /.vscode/
 /.idea/
 /.zed/
+
+/jellyfin-uploader-arm64.tar.gz
