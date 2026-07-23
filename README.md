@@ -51,3 +51,10 @@ uv sync
 cp .env.example .env  # then fill in your values
 just dev
 ```
+
+## Disclaimer
+
+**jellyfin-uploader does not support or condone piracy.** This application is designed solely for streaming
+media content that you personally own or have legal rights to access. jellyfin-uploader includes no media
+content whatsoever. Any references, discussions, or support requests related to piracy or related
+tools are strictly prohibited and will be removed.
