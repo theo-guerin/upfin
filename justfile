@@ -24,6 +24,3 @@ docker-setup-arm64:
 
 docker-build-arm64: docker-setup-arm64
     docker buildx build --platform linux/arm64 -t jellyfin-uploader:latest .
-
-docker-save-arm64: docker-build-arm64
-    docker save jellyfin-uploader:latest | gzip > jellyfin-uploader-arm64.tar.gz

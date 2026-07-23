@@ -10,7 +10,6 @@ RUN bun run build-only
 
 FROM dhi.io/python:3.14-debian13-sfw-dev AS backend-builder
 WORKDIR /app
-ARG UV_EXCLUDE_NEWER="7 days"
 COPY --from=dhi.io/uv:0-debian13 /usr/local/bin/uv \
     /usr/local/bin/uvx /usr/local/bin/
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -20,7 +19,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
         --no-python-downloads \
         --no-editable \
         --link-mode=copy \
-        --exclude-newer="${UV_EXCLUDE_NEWER}" \
         --locked \
         --no-compile \
         --no-dev

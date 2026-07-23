@@ -10,8 +10,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "run-s \"lint:*\"",
-    "lint:oxlint": "oxlint . --fix",
-    "lint:eslint": "eslint . --fix --cache",
+    "lint:oxlint": "oxlint .",
+    "lint:eslint": "eslint . --cache",
     "format": "prettier --write --experimental-cli src/",
     "generate-api": "openapi-typescript http://127.0.0.1:8080/openapi.json -o ./src/gen/types.ts"
   },
