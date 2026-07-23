@@ -1,10 +1,10 @@
 # jellyfin-uploader
 
-A web UI that uploads movies to your [Jellyfin](https://jellyfin.org) library, auto-detects movie names from filenames, and matches them against your Jellyfin catalog.
+A web UI for uploading movies to your [Jellyfin](https://jellyfin.org) library. It auto-detects movie names from filenames and matches them against your Jellyfin catalog.
 
 ## Quick start
 
-1. Set up the service on your Jellyfin server:
+1. Add the service to your docker-compose.yml:
 
    ```yaml
    services:
@@ -30,8 +30,7 @@ A web UI that uploads movies to your [Jellyfin](https://jellyfin.org) library, a
 
 ## Configuration
 
-Configuration is provided through environment variables in a `.env` file
-(see [`.env.example`](.env.example)):
+All settings are read from environment variables (see [.env.example](.env.example)):
 
 | Variable                      | Required | Default        | Description                                   |
 | ----------------------------- | -------- | -------------- | --------------------------------------------- |
@@ -42,9 +41,7 @@ Configuration is provided through environment variables in a `.env` file
 
 ## Local development
 
-For hacking on the project without Docker, you'll need
-[uv](https://docs.astral.sh/uv/), [bun](https://bun.sh), and
-[just](https://just.systems):
+To run the project locally without Docker, you'll need [uv](https://docs.astral.sh/uv/), [bun](https://bun.sh), and [just](https://just.systems):
 
 ```sh
 uv sync
@@ -54,7 +51,4 @@ just dev
 
 ## Disclaimer
 
-**jellyfin-uploader does not support or condone piracy.** This application is designed solely for streaming
-media content that you personally own or have legal rights to access. jellyfin-uploader includes no media
-content whatsoever. Any references, discussions, or support requests related to piracy or related
-tools are strictly prohibited and will be removed.
+**jellyfin-uploader does not support or condone piracy.** This tool is intended for managing media you personally own or have legal rights to. It does not include or distribute any media content.
