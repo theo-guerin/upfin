@@ -12,9 +12,9 @@ from guessit import guessit
 from app import config
 from app.jellyfin import Jellyfin, MovieSearchResult
 
-logger = logging.getLogger(__name__)
-
 UPLOAD_CHUNK_SIZE = 1024 * 1024  # 1 MB
+
+logger = logging.getLogger(__name__)
 
 jellyfin = Jellyfin(config.jellyfin_api_base_url, config.jellyfin_api_key)
 
