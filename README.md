@@ -1,4 +1,4 @@
-# jellyfin-uploader
+# upfin
 
 A web UI for uploading movies to your [Jellyfin](https://jellyfin.org) library. It auto-detects movie names from filenames and matches them against your Jellyfin catalog.
 
@@ -8,9 +8,9 @@ A web UI for uploading movies to your [Jellyfin](https://jellyfin.org) library. 
 
    ```yaml
    services:
-     jellyfin-uploader:
-       image: jellyfin-uploader:latest
-       container_name: jellyfin-uploader
+     upfin:
+       image: theoguerin/upfin:latest
+       container_name: upfin
        ports:
          - "5080:8080" # left is the host port — change it if needed
        logging:
@@ -51,4 +51,4 @@ just dev
 
 ## Disclaimer
 
-**jellyfin-uploader does not support or condone piracy.** This tool is intended for managing media you personally own or have legal rights to. It does not include or distribute any media content.
+**upfin does not support or condone piracy.** This tool is intended for managing media you personally own or have legal rights to. It does not include or distribute any media content.
