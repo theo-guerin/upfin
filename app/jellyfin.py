@@ -22,9 +22,7 @@ class Jellyfin:
             },
         )
 
-    async def search_movie(
-        self, name: str, year: int | None = None
-    ) -> list[MovieSearchResult]:
+    async def search_movie(self, query: str) -> list[MovieSearchResult]:
         """raises:
         httpx.HTTPStatusError: If the request to the Jellyfin API fails.
         """
@@ -33,10 +31,9 @@ class Jellyfin:
             "/Items/RemoteSearch/Movie",
             json={
                 "SearchInfo": {
-                    "Name": name,
-                    "Year": year,
+                    "Name": query,
+                    "IsAutomated": True,
                 },
-                "SearchProviderName": "TheMovieDb",
             },
         )
         response.raise_for_status()
@@ -50,5 +47,5 @@ class Jellyfin:
                 continue
             results.append(result)
 
-        logger.info("jellyfin search %s: %d results", name, len(results))
+        logger.info("jellyfin search %s: %d results", query, len(results))
         return results
