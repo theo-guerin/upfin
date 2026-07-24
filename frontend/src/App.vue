@@ -48,7 +48,10 @@ async function onFileSelected(f: File) {
   try {
     const { data, error: err } = await api.GET("/search_movie", {
       params: { query: { filename: f.name } },
-      signal: AbortSignal.any([searchAbort.signal, AbortSignal.timeout(30_000)]),
+      signal: AbortSignal.any([
+        searchAbort.signal,
+        AbortSignal.timeout(30_000),
+      ]),
     });
     results.value = data ?? [];
 
@@ -92,7 +95,8 @@ async function onSubmit() {
       if (response.status === 409) {
         error.value = `${selected.value.name} (${selected.value.year}) already exists in the library.`;
       } else if (response.status === 507) {
-        error.value = "The server ran out of disk space while uploading. Please contact an administrator.";
+        error.value =
+          "The server ran out of disk space while uploading. Please contact an administrator.";
       } else {
         error.value = "Upload failed. Please try again.";
       }
@@ -128,15 +132,12 @@ function reset() {
 
     <p
       v-if="error"
-      class="mb-6 rounded-lg bg-destructive/10 p-3 text-sm text-destructive"
+      class="bg-destructive/10 text-destructive mb-6 rounded-lg p-3 text-sm"
     >
       {{ error }}
     </p>
 
-    <UploadStep
-      v-if="step === 'upload'"
-      @file-selected="onFileSelected"
-    />
+    <UploadStep v-if="step === 'upload'" @file-selected="onFileSelected" />
 
     <IdentifyStep
       v-else-if="step === 'identify'"
@@ -160,7 +161,7 @@ function reset() {
       <p class="text-lg font-semibold text-green-600 dark:text-green-400">
         Done!
       </p>
-      <p class="text-sm text-muted-foreground">
+      <p class="text-muted-foreground text-sm">
         {{ selected?.name }} ({{ selected?.year }}) has been added.
       </p>
       <Button @click="reset">Upload another</Button>

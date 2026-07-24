@@ -57,8 +57,8 @@ function onDrop(event: DragEvent) {
     @dragleave="dragOver = false"
     @drop.prevent="onDrop"
   >
-    <UploadIcon class="size-8 text-muted-foreground" />
-    <p class="text-sm text-muted-foreground">
+    <UploadIcon class="text-muted-foreground size-8" />
+    <p class="text-muted-foreground text-sm">
       Drop a movie file here, or click to browse
     </p>
     <input
@@ -67,12 +67,9 @@ function onDrop(event: DragEvent) {
       accept="video/*"
       class="hidden"
       @change="onFileChange"
-    >
+    />
   </div>
-  <p
-    v-if="validationError"
-    class="mt-3 text-center text-sm text-destructive"
-  >
+  <p v-if="validationError" class="text-destructive mt-3 text-center text-sm">
     {{ validationError }}
   </p>
 </template>

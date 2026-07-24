@@ -28,7 +28,9 @@ const emit = defineEmits<{
         <CardTitle>{{ name }} ({{ year }})</CardTitle>
       </CardHeader>
       <CardContent>
-        <p class="break-all text-sm text-muted-foreground">File: {{ fileName }}</p>
+        <p class="text-muted-foreground text-sm break-all">
+          File: {{ fileName }}
+        </p>
       </CardContent>
     </Card>
 
