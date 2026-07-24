@@ -7,7 +7,6 @@ from tempfile import TemporaryDirectory
 
 import pathvalidate
 from fastapi import APIRouter, HTTPException, UploadFile
-from guessit import guessit
 
 from app import config
 from app.jellyfin import Jellyfin, MovieSearchResult
@@ -157,20 +156,9 @@ async def post_submit(movie: UploadFile, name: str, year: int):
     response_model=list[MovieSearchResult],
 )
 async def get_search_movie(filename: str):
-    guess = guessit(filename, {"type": "movie"})
-
-    name = guess.get("title")
-    if not name:
-        logger.info("could not detect title in filename: %s", filename)
-        raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST,
-            detail="Could not detect a movie title in the filename",
-        )
-
-    year = guess.get("year")
-    logger.info("searching movie: %s (%s)", name, year)
-
-    results = await jellyfin.search_movie(name, year)
+    name = Path(filename).stem
+    logger.info("searching movie: %s", name)
+    results = await jellyfin.search_movie(name)
 
     logger.info("search results for %s: %d found", name, len(results))
     return results
