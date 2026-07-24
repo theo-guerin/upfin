@@ -1,11 +1,8 @@
-dev: _load-dotenv
+dev:
     concurrently "just frontend-watch" "just run"
 
-_load-dotenv:
-    export $(grep -v '^#' .env | xargs)
-
 run:
-    uv run -m app
+    export $(grep -v '^#' .env | xargs) && uv run -m app
 
 frontend-build:
     bun run --cwd ./frontend build
