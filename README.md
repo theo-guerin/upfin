@@ -45,6 +45,7 @@ To run the project locally without Docker, you'll need [uv](https://docs.astral.
 
 ```sh
 uv sync
+bun install --cwd ./frontend
 cp .env.example .env  # then fill in your values
 just dev
 ```
