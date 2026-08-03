@@ -32,11 +32,11 @@ A web UI for uploading movies to your [Jellyfin](https://jellyfin.org) library. 
 
 All settings are read from environment variables (see [.env.example](.env.example)):
 
-| Variable                      | Required | Default        | Description                                   |
-| ----------------------------- | -------- | -------------- | --------------------------------------------- |
-| `JELLYFIN_API_BASE_URL`       | yes      |                | Base URL of the Jellyfin server API            |
-| `JELLYFIN_API_KEY`            | yes      |                | Jellyfin API key                               |
-| `JELLYFIN_MOVIE_LIBRARY_PATH` | yes      |                | Filesystem path to the Jellyfin movie library |
+| Variable                      | Required | Default        | Description                                       |
+| ----------------------------- | -------- | -------------- | ------------------------------------------------- |
+| `JELLYFIN_API_BASE_URL`       | yes      |                | Base URL of the Jellyfin server API               |
+| `JELLYFIN_API_KEY`            | yes      |                | Jellyfin API key                                  |
+| `JELLYFIN_MOVIE_LIBRARY_PATH` | yes      |                | Filesystem path to the Jellyfin movie library     |
 | `ENVIRONMENT`                 | no       | `DEVELOPMENT`  | `DEVELOPMENT` or `PRODUCTION` (ignore for Docker) |
 
 ## Local development
