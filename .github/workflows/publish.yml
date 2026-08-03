@@ -1,4 +1,5 @@
 name: Publish
+
 permissions:
   contents: read
 
@@ -13,6 +14,8 @@ on:
       - .gitattributes
       - .gitignore
       - justfile
+      - .env.example
+      - frontend/.gitignore
 
 jobs:
   backend:
