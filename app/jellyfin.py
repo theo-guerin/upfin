@@ -35,6 +35,7 @@ class Jellyfin:
                     "IsAutomated": True,
                 },
             },
+            timeout=60.0
         )
         response.raise_for_status()
 
